@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd" default-lazy-init="true">
+
+   <!-- 自动扫描与装配bean -->
+	<context:component-scan base-package="test.java.com.xabaohui.modules.trade"></context:component-scan>       
+   
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver">
+		</property>
+		<property name="url" value="jdbc:mysql://localhost:3306/zispro">
+		</property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	
+	<!-- 测试专用 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+				<value>com/xabaohui/modules/trade/bean/OrderDetail.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/OrderAssign.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/Order.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/OrderLog.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/OrderRefund.hbm.xml</value>
+				<value>
+					com/xabaohui/modules/trade/bean/OrderPostageDetail.hbm.xml
+				</value>
+				<value>com/xabaohui/modules/trade/bean/OrderCity.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/OrderPostage.hbm.xml</value>
+				<value>com/xabaohui/modules/trade/bean/OrderProvince.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="OrderDetailDAO" class="com.xabaohui.modules.trade.daoimpl.OrderDetailDaoImpl">
+	   <property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderAssignDAO" class="com.xabaohui.modules.trade.daoimpl.OrderAssignDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderDAO" class="com.xabaohui.modules.trade.daoimpl.OrderDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderLogDAO" class="com.xabaohui.modules.trade.daoimpl.OrderLogDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderRefundDAO" class="com.xabaohui.modules.trade.daoimpl.OrderRefundDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderPostageDAO" class="com.xabaohui.modules.trade.daoimpl.OrderPostageDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderCityDAO" class="com.xabaohui.modules.trade.daoimpl.OrderCityDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderProvinceDAO" class="com.xabaohui.modules.trade.daoimpl.OrderProvinceDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<bean id="OrderPostageDetailDAO"
+		class="com.xabaohui.modules.trade.daoimpl.OrderPostageDetailDaoImpl">
+		<property name="sessionFactory" ref="sessionFactory"/>
+	</bean>
+	<!-- 注入Bo -->
+	<bean id="TradeBO"
+		class="com.xabaohui.modules.trade.bo.TradeBO">
+		<property name="orderdao" ref="OrderDAO" />
+		<property name="orderdetaildao" ref="OrderDetailDAO" />
+		<property name="orderLogdao" ref="OrderLogDAO" />
+		<property name="postage" ref="PostageBO" />
+	</bean>
+	<bean id="PostageBO"
+		class="com.xabaohui.modules.trade.bo.PostageBO">
+		<property name="orderPostageDetailDao" ref="OrderPostageDetailDAO" />
+		<property name="orderPostageDao" ref="OrderPostageDAO" />
+	</bean>
+	<bean id="TradeBaseBO"
+		class="com.xabaohui.modules.trade.bo.TradeBaseBO">
+		<property name="orderDao" ref="OrderDAO" />
+		<property name="orderDetailDao" ref="OrderDetailDAO" />
+		<property name="orderLogDao" ref="OrderLogDAO" />
+	</bean>
+</beans>
